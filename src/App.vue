@@ -1,21 +1,14 @@
 <script>
-import {
-  defineComponent,
-  ref,
-  computed,
-  watch,
-} from "vue";
+import { defineComponent, ref, computed, watch } from "vue";
 import { ElConfigProvider } from "element-plus";
 import { RouterLink, RouterView, useRoute } from "vue-router";
 import locale from "element-plus/lib/locale/lang/zh-tw";
-import VLogin from "@/layouts/VLogin.vue";
-import VIndex from "@/layouts/VIndex.vue";
+import Layout from "@/layouts/Layout.vue";
 
 export default defineComponent({
   components: {
     ElConfigProvider,
-    VLogin,
-    VIndex,
+    Layout,
   },
   setup() {
     const route = useRoute();
@@ -23,7 +16,7 @@ export default defineComponent({
     const routeName = computed(() => route.name);
 
     function layoutWatchFunction() {
-      layout.value = route.meta.layout ?? "VIndex";
+      layout.value = route.meta.layout ?? "Index";
     }
 
     watch(route, layoutWatchFunction);
@@ -36,14 +29,11 @@ export default defineComponent({
 <template>
   <ElConfigProvider :locale="locale">
     <transition name="fade" mode="out-in">
-      <div class="container" :key="layout">
+      <div :key="layout">
         <component :is="layout">
           <router-view #default="{ Component }">
             <transition name="component" mode="out-in" appear>
-              <div
-                :class="layout === 'VIndex' ? 'login' : 'index'"
-                :key="routeName"
-              >
+              <div :key="routeName">
                 <component :is="Component" />
               </div>
             </transition>
@@ -55,12 +45,4 @@ export default defineComponent({
 </template>
 
 <style lang="scss" src="@/assets/style/global/_transition.scss"></style>
-<style lang="scss" scoped>
-.container {
-  font-family: "微軟正黑體", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  width: 100vw;
-  height: 100vh;
-}
-</style>
+<style lang="scss" scoped></style>

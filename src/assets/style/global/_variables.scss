@@ -1,39 +1,26 @@
-$color-blue: #1673e1;
-$color-yellow: #fff8df;
-$color-green: #bcdcb4;
-$color-gray: #ebeef5;
-$color-orange: #ffa500;
-$color-light-orange: #fdcaad;
+$primary-dark: #6C8268;
+$primary-normal: #BBE2B5;
+$primary-light: #E1EDDF;
+$black: black;
+$gray-900: #2A2A2A;
+$gray-800: #6F6F6F;
+$gray-700: #CFCFCF;
+$white: white;
 
-$menu-bg: adjust-hue($color-green, 60deg);
-$burger-color: #000;
-
-.title {
-	background: $color-green;
-	color: #000;
-	margin-bottom: 10px;
-	padding: 8px 0px;
-	font-size: 20px;
-	padding-left: 20px;
-	font-weight: 600;
-}
-button, a {
-	cursor: pointer;
-}
-@mixin flex($justify-content: start, $align-items: center, $flex-wrap: wrap) {
+@mixin flex($justify-content: start, $align-items: center, $flex-direction: row, $flex-wrap: wrap) {
 	display: flex;
 	align-items: $align-items;
 	justify-content: $justify-content;
-	flex-direction: row;
+	flex-direction: $flex-direction;
 	flex-wrap: $flex-wrap;
 }
 
 @mixin position($position, $left: initial, $top: initial, $right: initial, $bottom: initial) {
 	position: $position;
-	top: $top;
 	left: $left;
-	bottom: $bottom;
+	top: $top;
 	right: $right;
+	bottom: $bottom;
 }
 
 @mixin rwd($point) {

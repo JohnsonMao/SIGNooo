@@ -25,20 +25,3 @@
     opacity: 1;
     transform: translateY(0px);
 }
-
-.slice-enter-active,
-.slice-leave-active {
-    transition: all .3s ease-out;
-}
-
-.slice-enter-from,
-.slice-leave-to {
-    height: 0;
-    background-color: $color-green !important;
-    overflow: hidden;
-}
-.slice-enter-to,
-.slice-leave-from {
-    height: 100vh;
-    background-color: $menu-bg !important;
-}
