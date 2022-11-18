@@ -1,0 +1,44 @@
+.fade-enter-active,
+.fade-leave-active,
+.component-enter-active,
+.component-leave-active {
+    transition: all 0.3s linear;
+}
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+
+.fade-enter-to,
+.fade-leave-from {
+    opacity: 1;
+}
+
+.component-enter-from,
+.component-leave-to {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+.component-enter-to,
+.component-leave-from {
+    opacity: 1;
+    transform: translateY(0px);
+}
+
+.slice-enter-active,
+.slice-leave-active {
+    transition: all .3s ease-out;
+}
+
+.slice-enter-from,
+.slice-leave-to {
+    height: 0;
+    background-color: $color-green !important;
+    overflow: hidden;
+}
+.slice-enter-to,
+.slice-leave-from {
+    height: 100vh;
+    background-color: $menu-bg !important;
+}

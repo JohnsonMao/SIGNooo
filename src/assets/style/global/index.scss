@@ -1,0 +1,19 @@
+@forward './variables';
+@forward 'element-plus/theme-chalk/src/common/var.scss' with (
+    $colors: (
+        'primary': (
+            'base': #bcdcb4,
+        ),
+        'secondary': (
+            'base': #fff8df,
+        )
+    ),
+    $font-size: (
+        'extra-large': 2rem,
+        'large': 1.5rem,
+        'medium': 1.25rem,
+        'base': 1rem,
+        'small': 14px,
+        'extra-small': 12px,
+    )
+);

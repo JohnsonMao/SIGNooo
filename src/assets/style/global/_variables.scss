@@ -1,0 +1,45 @@
+$color-blue: #1673e1;
+$color-yellow: #fff8df;
+$color-green: #bcdcb4;
+$color-gray: #ebeef5;
+$color-orange: #ffa500;
+$color-light-orange: #fdcaad;
+
+$menu-bg: adjust-hue($color-green, 60deg);
+$burger-color: #000;
+
+.title {
+	background: $color-green;
+	color: #000;
+	margin-bottom: 10px;
+	padding: 8px 0px;
+	font-size: 20px;
+	padding-left: 20px;
+	font-weight: 600;
+}
+button, a {
+	cursor: pointer;
+}
+@mixin flex($justify-content: start, $align-items: center, $flex-wrap: wrap) {
+	display: flex;
+	align-items: $align-items;
+	justify-content: $justify-content;
+	flex-direction: row;
+	flex-wrap: $flex-wrap;
+}
+
+@mixin position($position, $left: initial, $top: initial, $right: initial, $bottom: initial) {
+	position: $position;
+	top: $top;
+	left: $left;
+	bottom: $bottom;
+	right: $right;
+}
+
+@mixin rwd($point) {
+	@if $point == pad {
+		@media (max-width: 640px) {
+			@content
+		}
+	}
+}
