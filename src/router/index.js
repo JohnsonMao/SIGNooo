@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 
-const modules = import.meta.glob("./**/*.js", {
+const modules = import.meta.glob("./*.js", {
   eager: true,
   import: "default",
 });
@@ -11,15 +11,11 @@ const router = createRouter({
     ...Object.values(modules)
       .flat()
       .sort((a, b) => (a.path > b.path ? 1 : -1)),
-    // {
-    //   path: "/NotFound",
-    //   name: "NotFound",
-    //   component: () => import("@/views/home/NotFound.vue"),
-    // },
-    // {
-    //   path: "/:pathMatch(.*)*",
-    //   redirect: () => ({ name: "NotFound" }),
-    // },
+    {
+      path: "/:pathMatch(.*)*",
+      name: "NotFound",
+      component: () => import("@/views/NotFound.vue"),
+    },
   ],
 });
 

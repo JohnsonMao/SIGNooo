@@ -6,6 +6,17 @@ $gray-900: #2A2A2A;
 $gray-800: #6F6F6F;
 $gray-700: #CFCFCF;
 $white: white;
+$logo-font: "Brother 1816";
+
+.primary-btn {
+    background: $primary-dark;
+    color: $white;
+}
+
+.secondary-btn {
+    background: $primary-light;
+    color: $primary-dark;
+}
 
 @mixin flex($justify-content: start, $align-items: center, $flex-direction: row, $flex-wrap: wrap) {
 	display: flex;

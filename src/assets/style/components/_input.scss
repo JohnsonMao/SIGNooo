@@ -1,0 +1,9 @@
+:deep .bg-transparent .el-input__wrapper {
+	background: transparent;
+	box-shadow: none;
+	color: #000;
+
+	.el-input__inner {
+		cursor: pointer;
+	}
+}

@@ -4,8 +4,11 @@
         'primary': (
             'base': #6C8268,
         ),
-        'secondary': (
+        'success': (
             'base': #BBE2B5,
+        ),
+        'info': (
+            'base': #E1EDDF,
         )
     ),
     $font-size: (
@@ -15,5 +18,13 @@
         'base': 1rem,
         'small': 14px,
         'extra-small': 12px,
+    ),
+    $menu: (
+        'item-height': 1,
+        'base-level-padding': 0,
+        'hover-bg-color': transparent,
+    ),
+    $button: (
+        'text-color': black,
     )
 );
