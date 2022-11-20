@@ -62,8 +62,8 @@ const letters = [s, i, g, n, dot, logo];
   </div>
 </template>
 
-<style lang="scss" src="@/assets/style/components/_button.scss"></style>
 <style scoped lang="scss">
+@import "@/assets/style/components/_button.scss";
 .container {
   position: relative;
 

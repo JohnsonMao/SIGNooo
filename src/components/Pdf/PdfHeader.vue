@@ -56,7 +56,7 @@ function handleChange(e) {
       <el-button @click="goPage(1)" circle :disabled="curPage === maxPage">
         <el-icon><ArrowDownBold /></el-icon>
       </el-button>
-      <el-button @click="goPage(-1)" circle :disabled="curPage === 1">
+      <el-button @click="goPage(-1)" circle :disabled="curPage < 2">
         <el-icon><ArrowUpBold /></el-icon>
       </el-button>
     </div>

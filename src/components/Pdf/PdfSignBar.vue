@@ -153,6 +153,7 @@ function submit() {
 
 <style scoped lang="scss">
 @import "@/assets/style/components/_input.scss";
+@import "@/assets/style/components/_button.scss";
 
 .sign {
   height: calc(var(--height) + 58px);

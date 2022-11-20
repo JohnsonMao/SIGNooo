@@ -75,8 +75,8 @@ function handle({ action, item }) {
   <PdfVue :pdfFile="pdfFile" />
 </template>
 
-<style lang="scss" src="@/assets/style/components/_button.scss"></style>
 <style scoped lang="scss">
+@import "@/assets/style/components/_button.scss";
 .dialog {
   @include flex(center, stretch, column, nowrap);
   position: relative;
