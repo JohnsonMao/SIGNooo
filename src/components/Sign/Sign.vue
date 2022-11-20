@@ -1,5 +1,6 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { nextTick, onMounted, ref, inject } from "vue";
+import Upload from "../Upload.vue";
 
 const width = window.innerWidth * 0.8 - 90;
 // const height = window.innerHeight * 0.8 - 40;
@@ -10,21 +11,62 @@ const ctx = ref(null);
 const signName = ref("");
 const isMouseDown = ref(false);
 const isStart = ref(false);
+const activeName = ref("draw");
+const canvasHistroy = ref([]);
+const required = ref(false);
+const inputRef = ref(null);
+const signs = inject("signs");
+const tip = ref("取個名稱嘛～");
+const dialogStatus = inject("dialogStatus");
 let lastXY = { x: 0, y: 0 };
 let lastTime = 0;
 let lastLineWidth = -1;
 let strokeColor = "black";
 
 onMounted(() => {
+  const { name, img } = dialogStatus.value;
   ctx.value = canvas.value.getContext("2d");
 
   canvas.value.width = width;
   canvas.value.height = height;
+
+  if (name && img) {
+    const image = new Image();
+
+    image.onload = () => {
+      isStart.value = true;
+      ctx.value.clearRect(0, 0, width, height);
+      ctx.value.drawImage(image, 0, 0);
+    };
+
+    image.src = img;
+    signName.value = name;
+  }
 });
 
 function clear() {
   ctx.value.clearRect(0, 0, width, height);
   isStart.value = false;
+  required.value = false;
+  canvasHistroy.value = [];
+}
+
+function goBack() {
+  if (canvasHistroy.value.length > 1) {
+    canvasHistroy.value.pop();
+    const h = canvasHistroy.value;
+    const source = h[h.length - 1];
+    const image = new Image();
+
+    image.onload = () => {
+      ctx.value.clearRect(0, 0, width, height);
+      ctx.value.drawImage(image, 0, 0);
+    };
+
+    image.src = source;
+  } else {
+    clear();
+  }
 }
 
 function getXY(x, y) {
@@ -83,6 +125,9 @@ function beginStroke(e) {
 
 function endStroke(e) {
   e.preventDefault();
+  if (isMouseDown.value) {
+    canvasHistroy.value.push(canvas.value.toDataURL());
+  }
   isMouseDown.value = false;
 }
 
@@ -113,14 +158,81 @@ function moveStroke(e) {
   lastLineWidth = lineWidth;
 }
 
-const activeName = ref("draw");
+function submit() {
+  const name = signName.value;
+
+  if (!name) {
+    required.value = true;
+    tip.value = "取個名稱嘛～";
+    nextTick(() => {
+      inputRef.value.focus();
+    });
+    return;
+  }
+  const index = signs.value.findIndex((sign) => sign.name === name);
+  if (~index) {
+    required.value = true;
+    tip.value = "名稱重複囉！";
+    nextTick(() => {
+      inputRef.value.focus();
+    });
+    return;
+  }
+  if (!isStart.value) return;
+  const img = canvas.value.toDataURL();
+
+  signs.value.push({ name, img });
+  localStorage.setItem(`SIGN_${name}`, img);
+  dialogStatus.value.show = false;
+}
+
+function handle({ action, item }) {
+  switch (action) {
+    case "PNG":
+      {
+        const image = new Image();
+
+        image.onload = () => {
+          const isWidthLong = image.width > image.height;
+          const imageRatio = isWidthLong
+            ? image.height / image.width
+            : image.width / image.height;
+
+          ctx.value.clearRect(0, 0, width, height);
+          ctx.value.drawImage(
+            image,
+            0,
+            0,
+            width * imageRatio,
+            height * imageRatio
+          );
+        };
+
+        image.src = URL.createObjectURL(item);
+
+        activeName.value = "draw";
+        isStart.value = true;
+      }
+      break;
+  }
+}
 </script>
 
 <template>
   <div class="sign">
-    <div class="sign__name">
+    <div :class="['sign__name', { required }]">
       <label for="signName">簽名檔名稱</label>
-      <el-input id="signName" v-model="signName" />
+      <div class="input">
+        <el-input
+          id="signName"
+          ref="inputRef"
+          v-model.trim="signName"
+          placeholder="請輸入此簽名檔名稱"
+          @keydown.enter="submit"
+          required
+        />
+      </div>
+      <span class="tip">{{ tip }}</span>
     </div>
 
     <el-tabs v-model="activeName" type="border-card">
@@ -138,9 +250,15 @@ const activeName = ref("draw");
             @touchend="endStroke"
           ></canvas>
           <div class="sign__control__buttons">
-            <el-button class="primary-btn" :disabled="!isStart">重做</el-button>
+            <el-button
+              class="primary-btn"
+              @click="goBack"
+              :disabled="!canvasHistroy.length"
+            >
+              返回
+            </el-button>
             <el-button class="primary-btn" @click="clear" :disabled="!isStart">
-              刪除
+              清空
             </el-button>
           </div>
           <span class="sign__control__placeholder" v-show="!isStart">
@@ -148,10 +266,16 @@ const activeName = ref("draw");
           </span>
         </div>
       </el-tab-pane>
-      <el-tab-pane label="上傳簽名檔" name="upload">upload</el-tab-pane>
+      <el-tab-pane label="上傳簽名檔" name="upload">
+        <Upload accept="image/png" :size="1" type="PNG" @handle="handle" />
+      </el-tab-pane>
     </el-tabs>
 
-    <el-button class="primary-btn sign__submit" :disabled="!isStart">
+    <el-button
+      class="primary-btn sign__submit"
+      :disabled="!isStart"
+      @click="submit"
+    >
       確認新增簽名檔
     </el-button>
   </div>
@@ -164,11 +288,40 @@ const activeName = ref("draw");
   height: 100%;
 
   &__name {
-    width: 30%;
+    position: relative;
+    width: 250px;
 
     label {
       margin-bottom: 8px;
       display: block;
+    }
+
+    .input {
+      position: relative;
+
+      &::after {
+        content: "";
+        @include position(absolute, 0, 0, 0, 0);
+        border-radius: 4px;
+        box-shadow: inset 0 0 0 1px transparent;
+      }
+    }
+
+    .tip {
+      @include position(absolute, initial, initial, 4px, 4px);
+      font-size: 12px;
+      color: transparent;
+      pointer-events: none;
+    }
+
+    &.required {
+      .input::after {
+        box-shadow: inset 0 0 0 1px $danger;
+      }
+
+      .tip {
+        color: $danger;
+      }
     }
   }
 

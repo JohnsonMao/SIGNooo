@@ -2,13 +2,21 @@
 import HeaderVue from "@/components/Header.vue";
 import { provide, ref } from "vue";
 
-const dialogIsShow = ref(true);
+const dialogStatus = ref({
+  show: true,
+  active: 0,
+  img: null,
+  name: "",
+});
 
-function openDialog() {
-  dialogIsShow.value = true;
+function openDialog({ active, img, name }) {
+  dialogStatus.value.show = true;
+  dialogStatus.value.active = active || 0;
+  dialogStatus.value.img = img;
+  dialogStatus.value.name = name;
 }
 
-provide("dialogIsShow", dialogIsShow);
+provide("dialogStatus", dialogStatus);
 provide("openDialog", openDialog);
 </script>
 

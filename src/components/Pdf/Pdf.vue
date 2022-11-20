@@ -6,12 +6,14 @@ import {
   onUpdated,
   onBeforeUnmount,
   watch,
+onMounted,
 } from "vue";
 import { fabric } from "fabric";
 import PdfHeader from "./PdfHeader.vue";
 import PdfAside from "./PdfAside.vue";
 import PdfSignBar from "./PdfSignBar.vue";
 import { usePrintPDF, usePdfToImage } from "@/composables";
+import { ElMessage } from "element-plus";
 
 const props = defineProps({
   pdfFile: {
@@ -48,8 +50,9 @@ async function uploadFile(file) {
   pdfImages.value = await Promise.all(
     result.map((item) => usePdfToImage(item.canvas))
   );
+  const scale = 1 / window.devicePixelRatio;
   maxPage.value = result.length;
-  pdfBaseHeight = result[0]?.height;
+  pdfBaseHeight = result[0]?.height * scale;
 
   // 每上傳一個 PDF 重置狀態
   fileName.value = file.name;
@@ -90,14 +93,11 @@ onUpdated(() => {
 
   if (!isRender.value && canvasArray.length !== 0) {
     isRender.value = true;
-    const { offsetWidth, scrollWidth } = mainRef.value;
-    const threshold = 0.4 * (offsetWidth / scrollWidth);
-
     observer.value = new IntersectionObserver(
       ([e]) => {
         if (e.isIntersecting) curPage.value = +e.target.dataset.page;
       },
-      { root: mainRef.value, threshold }
+      { root: mainRef.value }
     );
 
     canvasArray.forEach((element) => {
@@ -108,10 +108,47 @@ onUpdated(() => {
   }
 });
 
+function keyEventHandler(e) {
+  switch (e.keyCode) {
+    case 38:
+      if (curPage.value > 1) handlePage(curPage.value - 1);
+      break;
+    case 40:
+      if (curPage.value < maxPage.value) handlePage(curPage.value + 1);
+      break;
+  }
+}
+
+onMounted(() => {
+  window.addEventListener("keydown", keyEventHandler);
+});
+
 onBeforeUnmount(() => {
+  window.removeEventListener("keydown", keyEventHandler);
   observer.value?.disconnect();
   observer.value = null;
 });
+
+function joinPdf({ action, item }) {
+  if (fabricCanvas.length === 0) {
+    ElMessage.error("請先上傳 PDF 文件");
+    return;
+  }
+  console.log(fabric);
+  switch (action) {
+    case "sign":
+      fabric.Image.fromURL(item.img, (image) => {
+        image.scaleX = 0.5;
+        image.scaleY = 0.5;
+        fabricCanvas[curPage.value - 1].add(image);
+      });
+      break;
+    case "date":
+    case "text":
+      fabricCanvas[curPage.value - 1].add(new fabric.IText(item));
+      break;
+  }
+}
 </script>
 
 <template>
@@ -145,7 +182,7 @@ onBeforeUnmount(() => {
       </div>
     </div>
     <div class="pdf__signBar">
-      <PdfSignBar />
+      <PdfSignBar @joinPdf="joinPdf" />
     </div>
   </div>
 </template>

@@ -23,19 +23,15 @@ const props = defineProps({
 
 const emit = defineEmits(["handle"]);
 
-function beforeUpload(rawFile) {
-  if (rawFile.type !== props.accept) {
-    ElMessage.error(`檔案必須是 ${props.type} 格式`);
-    return false;
-  }
-  if (rawFile.size / 1024 / 1024 > props.size) {
-    ElMessage.error(`檔案超過 ${props.size}MB 了!`);
-    return false;
-  }
-  return true;
-}
-
 function handleChange(file) {
+  if (file.raw.type !== props.accept) {
+    ElMessage.error(`檔案必須是 ${props.type} 格式`);
+    return;
+  }
+  if (file.raw.size / 1024 / 1024 > props.size) {
+    ElMessage.error(`檔案超過 ${props.size}MB 了!`);
+    return;
+  }
   emit("handle", { action: props.type, item: file.raw });
 }
 </script>
@@ -44,7 +40,6 @@ function handleChange(file) {
   <el-upload
     :accept="accept"
     :auto-upload="false"
-    :before-upload="beforeUpload"
     :on-change="handleChange"
     class="upload"
     drag
@@ -65,5 +60,9 @@ function handleChange(file) {
 <style scoped lang="scss">
 .upload {
   padding: 24px;
+}
+
+.mode .upload {
+  padding: 0;
 }
 </style>

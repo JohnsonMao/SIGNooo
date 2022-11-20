@@ -31,6 +31,10 @@ function handClose() {
   @include flex(center, center);
 }
 
+.el-overlay-dialog {
+  backdrop-filter: blur(4px);
+}
+
 .el-dialog {
   border-radius: 10px;
 

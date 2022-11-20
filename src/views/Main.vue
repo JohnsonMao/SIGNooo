@@ -1,29 +1,37 @@
 <script setup>
 import PdfVue from "@/components/Pdf/Pdf.vue";
-import { ref, inject, computed } from "vue";
+import { ref, inject, computed, provide } from "vue";
 import DialogVue from "@/components/Dialog.vue";
 import StepVue from "@/components/Step.vue";
 import UploadVue from "@/components/Upload.vue";
 import SignVue from "@/components/Sign/Sign.vue";
 
-const dialogIsShow = inject("dialogIsShow");
+const dialogStatus = inject("dialogStatus");
 const pdfFile = ref(null);
-const active = ref(0);
+const active = computed(() => dialogStatus.value.active);
 const isSignMode = computed(() => active.value % 1 !== 0);
+const signs = ref(
+  Object.keys(localStorage).map((key) => ({
+    name: /^SIGN_(.+)$/.exec(key)?.[1] || "",
+    img: localStorage.getItem(key),
+  }))
+);
+
+provide("signs", signs);
 
 function handle({ action, item }) {
   switch (action) {
     case "PDF":
       pdfFile.value = item;
-      active.value = 1;
+      dialogStatus.value.active = 1;
       break;
 
     case "drawSign":
-      active.value = 1.5;
+      dialogStatus.value.active = 1.5;
       break;
 
     case "uploadSign":
-      active.value = 1.5;
+      dialogStatus.value.active = 1.5;
       break;
   }
 }
@@ -31,7 +39,7 @@ function handle({ action, item }) {
 
 <template>
   <DialogVue
-    v-model="dialogIsShow"
+    v-model="dialogStatus.show"
     :mode="isSignMode"
     :title="isSignMode ? '新增新的簽名檔' : ''"
   >

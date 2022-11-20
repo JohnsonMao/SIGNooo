@@ -86,11 +86,14 @@ function handlePage(page) {
     @include flex(center, center, column);
     cursor: pointer;
     gap: 0.25rem;
+    transform: scale(0.9);
+    transition: 0.2s;
 
     &:hover,
     &.active {
+      transform: scale(1);
       img {
-        box-shadow: 0 0 2px 2px $primary-normal;
+        box-shadow: 0 0 0 4px $primary-normal;
       }
       span {
         color: $primary-normal;
