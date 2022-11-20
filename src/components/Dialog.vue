@@ -46,20 +46,37 @@ function handClose() {
     background-color: lighten($primary-light, 8);
   }
   height: 60vh;
-  transition: 0.3s;
-  overflow: hidden;
+  transition: height 0.3s;
 
   &.mode {
     height: 80vh;
 
     &::before {
-      @include position(absolute, 0, 0, 0, 0);
+      --x: calc(40vw - 40vh);
+      --y: calc(40vh - 40vw);
+      left: var(--x);
+      top: var(--y);
+      right: var(--x);
+      bottom: var(--y);
       transform: rotate(90deg);
+      background-color: lighten($primary-light, 0);
+      background-position: bottom;
+    }
+
+    & .el-dialog__header {
+      background: $white;
     }
   }
 
   &__header {
-    padding: 20px;
+    position: relative;
+    margin: 0;
+    padding: 8px 24px;
+    background: transparent;
+    border-radius: 10px 10px 0 0;
+    font-weight: bold;
+    transition: 0.3s;
+    z-index: 1;
 
     &btn {
       @include position(absolute, initial, 0px, 0px, initial);
@@ -69,6 +86,7 @@ function handClose() {
       height: 44px;
       font-size: 24px;
       background-color: transparent;
+      z-index: 1;
     }
   }
 
@@ -76,6 +94,7 @@ function handClose() {
     position: relative;
     padding: 0 10px;
     z-index: 1;
+    height: calc(100% - 40px);
   }
 
   &__close {

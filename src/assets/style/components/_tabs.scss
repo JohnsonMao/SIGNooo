@@ -1,0 +1,35 @@
+@import "../global/variables";
+
+:deep .el-tabs {
+    --border-radius: 10px;
+    margin-top: 16px;
+    border: none;
+}
+
+:deep .el-tabs,
+:deep .el-tabs__header {
+    background-color: transparent;
+}
+
+:deep .el-tabs__item {
+    background-color: $white;
+    height: initial;
+    line-height: 1.75;
+
+    &:first-child {
+        border-radius: var(--border-radius) 0 0 0;
+    }
+    &:last-child {
+        border-radius: 0 var(--border-radius) 0 0;
+    }
+}
+
+:deep .el-tabs--border-card > .el-tabs__header .el-tabs__item.is-active {
+    background-color: $gray-900;
+    color: $white;
+}
+
+:deep .el-tabs__content {
+    background-color: $gray-900;
+    border-radius: 0 var(--border-radius) var(--border-radius) var(--border-radius);
+}

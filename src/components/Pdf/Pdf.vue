@@ -91,14 +91,13 @@ onUpdated(() => {
   if (!isRender.value && canvasArray.length !== 0) {
     isRender.value = true;
     const { offsetWidth, scrollWidth } = mainRef.value;
-    const rootMargin = `0px 0px ${offsetWidth}px 0px`;
     const threshold = 0.4 * (offsetWidth / scrollWidth);
 
     observer.value = new IntersectionObserver(
       ([e]) => {
         if (e.isIntersecting) curPage.value = +e.target.dataset.page;
       },
-      { root: mainRef.value, rootMargin, threshold }
+      { root: mainRef.value, threshold }
     );
 
     canvasArray.forEach((element) => {

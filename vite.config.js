@@ -74,7 +74,6 @@ export default defineConfig(({ mode }) => {
             vue: [
               "vue",
               "vue-router",
-              "vue-cryptojs",
               "element-plus",
               "@element-plus/icons-vue",
             ],

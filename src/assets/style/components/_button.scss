@@ -1,0 +1,35 @@
+
+
+.primary-btn {
+    background: $primary-dark;
+    color: $white;
+
+	&:hover,
+	&:active,
+	&:focus {
+		background: darken($primary-dark, 10);
+		color: $primary-light;
+	}
+}
+
+.secondary-btn {
+    background: $primary-light;
+    color: $primary-dark;
+
+	&:hover,
+	&:active,
+	&:focus {
+		background: darken($primary-light, 5);
+		color: darken($primary-dark, 10);
+	}
+}
+
+:deep .is-disabled {
+    background: $gray-700;
+    color: $white;
+
+    &:hover {
+        background: lighten($gray-700, 10);
+        color: $white;
+    }
+}

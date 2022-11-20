@@ -23,3 +23,5 @@ const steps = [
     <el-step v-for="step in steps" :key="step.title" :title="step.title" />
   </el-steps>
 </template>
+
+<style scoped lang="scss"></style>
