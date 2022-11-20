@@ -73,9 +73,17 @@ function handleChange(e) {
   background: $gray-900;
   gap: 0.5rem;
 
+  @media (max-width: 767px) {
+    justify-content: center;
+  }
+
   &__input {
     margin-right: 0.5rem;
     flex: 0 1 240px;
+
+    @media (max-width: 767px) {
+      display: none;
+    }
   }
 
   &__page {

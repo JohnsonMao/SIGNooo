@@ -108,5 +108,9 @@ function handle({ action, item }) {
 
 .mode .dialog {
   padding: 20px;
+
+  @media (max-width: 767px) {
+    padding: 20px 0;
+  }
 }
 </style>

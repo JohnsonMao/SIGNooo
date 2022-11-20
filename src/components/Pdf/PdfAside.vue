@@ -48,6 +48,10 @@ function handlePage(page) {
   overflow: auto;
   transition: 0.3s;
 
+  @media (max-width: 767px) {
+    display: none;
+  }
+
   button {
     position: fixed;
     bottom: 0;

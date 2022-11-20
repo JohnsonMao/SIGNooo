@@ -6,6 +6,7 @@ import Component from "./assets/plugins";
 import "./assets/style/global/_reset.scss";
 import "./assets/style/global/_base.scss";
 import "element-plus/theme-chalk/el-message.css";
+import "element-plus/theme-chalk/el-message-box.css";
 
 const app = createApp(App);
 

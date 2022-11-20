@@ -17,7 +17,6 @@ function handClose() {
     v-bind="$attrs"
     :append-to-body="true"
     :destroy-on-close="true"
-    :width="mode ? '80%' : '60%'"
     :class="{ mode }"
     @closed="handClose"
     top="0"
@@ -49,11 +48,23 @@ function handClose() {
     background-blend-mode: overlay;
     background-color: lighten($primary-light, 8);
   }
+  width: 60%;
   height: 60vh;
   transition: height 0.3s;
 
+  @media (max-width: 767px) {
+    width: 90%;
+  }
+
   &.mode {
+    width: 80%;
     height: 80vh;
+
+    @media (max-width: 767px) {
+      width: 90%;
+      height: 90%;
+      background: $primary-light;
+    }
 
     &::before {
       --x: calc(40vw - 40vh);
@@ -65,6 +76,10 @@ function handClose() {
       transform: rotate(90deg);
       background-color: lighten($primary-light, 0);
       background-position: bottom;
+
+      @media (max-width: 767px) {
+        display: none;
+      }
     }
 
     & .el-dialog__header {
@@ -80,7 +95,7 @@ function handClose() {
     border-radius: 10px 10px 0 0;
     font-weight: bold;
     transition: 0.3s;
-    z-index: 1;
+    z-index: 2;
 
     &btn {
       @include position(absolute, initial, 0px, 0px, initial);
@@ -90,7 +105,6 @@ function handClose() {
       height: 44px;
       font-size: 24px;
       background-color: transparent;
-      z-index: 1;
     }
   }
 

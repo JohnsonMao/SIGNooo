@@ -1,13 +1,18 @@
 <script setup>
 import { ref, inject } from "vue";
-import { Plus, EditPen, Delete } from "@element-plus/icons-vue";
+import { Plus, EditPen, Delete, Close } from "@element-plus/icons-vue";
+import { ElMessage, ElMessageBox } from "element-plus";
+import penSvg from "@/assets/images/pen.svg";
+import dateSvg from "@/assets/images/date.svg";
+import textSvg from "@/assets/images/text.svg";
 
-const emit = defineEmits(["joinPdf"]);
+const emit = defineEmits(["joinPdf", "download"]);
 
 const date = ref(new Date().toLocaleDateString());
 const text = ref("");
 const signs = inject("signs");
 const openDialog = inject("openDialog");
+const activeMode = ref("");
 
 function edit(sign) {
   sign.active = 1.5;
@@ -20,11 +25,22 @@ function add() {
 }
 
 function del({ name }, index) {
-  signs.value.splice(index, 1);
-  localStorage.removeItem(`SIGN_${name}`);
+  ElMessageBox.confirm("確定要刪除此簽名檔？", "", {
+    confirmButtonText: "確定",
+    cancelButtonText: "取消",
+    type: "warning",
+  }).then(() => {
+    signs.value.splice(index, 1);
+    localStorage.removeItem(`SIGN_${name}`);
+    ElMessage({
+      type: "success",
+      message: "刪除完成",
+    });
+  });
 }
 
 function join(data) {
+  activeMode.value = "";
   switch (data.action) {
     case "date":
       data.item = date.value;
@@ -36,14 +52,40 @@ function join(data) {
   }
   emit("joinPdf", data);
 }
+
+function submit() {
+  emit("download");
+}
 </script>
 
 <template>
   <aside class="sign">
     <h2>簽署文件</h2>
-    <ul>
+    <ul class="sign__mobile">
       <li>
-        <div>您的簽名</div>
+        <el-button @click="activeMode = 'signMode'">
+          <img :src="penSvg" alt="您的簽名" />
+        </el-button>
+      </li>
+      <li>
+        <el-button @click="activeMode = 'textMode'">
+          <img :src="textSvg" alt="文字" />
+        </el-button>
+      </li>
+      <li>
+        <el-button @click="activeMode = 'dateMode'">
+          <img :src="dateSvg" alt="日期" />
+        </el-button>
+      </li>
+      <li>
+        <el-button @click="openDialog">重選文件</el-button>
+      </li>
+    </ul>
+    <ul :class="[activeMode, 'sign__desktop']">
+      <li class="signModeTarget">
+        <div class="target">
+          您的簽名<el-icon @click="activeMode = ''"><Close /></el-icon>
+        </div>
         <template v-for="(sign, index) in signs" :key="index">
           <div class="sign__title">{{ sign.name }}</div>
           <div
@@ -61,12 +103,16 @@ function join(data) {
             </el-button>
           </div>
         </template>
-        <button class="bg sign__add" @click="add" v-show="signs.length < 3">
-          <el-icon><Plus /></el-icon>新增簽名檔
-        </button>
+        <div>
+          <button class="bg sign__add" @click="add" v-show="signs.length < 3">
+            <el-icon><Plus /></el-icon>新增簽名檔
+          </button>
+        </div>
       </li>
-      <li>
-        <div>日期</div>
+      <li class="dateModeTarget">
+        <div class="target">
+          日期<el-icon @click="activeMode = ''"><Close /></el-icon>
+        </div>
         <div class="bg">
           <el-date-picker
             v-model="date"
@@ -81,8 +127,10 @@ function join(data) {
           /></el-icon>
         </div>
       </li>
-      <li>
-        <div>文字</div>
+      <li class="textModeTarget">
+        <div class="target">
+          文字<el-icon @click="activeMode = ''"><Close /></el-icon>
+        </div>
         <div class="bg">
           <el-input
             v-model="text"
@@ -96,8 +144,9 @@ function join(data) {
       </li>
     </ul>
     <div class="btnGroup">
-      <el-button class="secondary-btn" size="large">儲存文件於草稿</el-button>
-      <el-button class="primary-btn" size="large">確定簽署此文件</el-button>
+      <el-button class="primary-btn" size="large" @click="submit">
+        簽署文件並下載
+      </el-button>
     </div>
   </aside>
 </template>
@@ -109,6 +158,11 @@ function join(data) {
   height: calc(var(--height) + 58px);
   overflow: auto;
 
+  @media (max-width: 767px) {
+    height: initial;
+    width: 100%;
+  }
+
   h2 {
     position: sticky;
     top: 0;
@@ -119,14 +173,80 @@ function join(data) {
     color: $white;
     width: 100%;
     z-index: 2;
+
+    @media (max-width: 767px) {
+      display: none;
+    }
   }
 
-  ul {
-    padding: 16px 24px;
+  &__mobile {
+    display: none;
+
+    @media (max-width: 767px) {
+      @include flex(center);
+      padding: 0;
+      background: $black;
+      width: 100%;
+      gap: 16px;
+    }
+
+    button {
+      padding: 6px;
+    }
   }
 
+  &__desktop {
+    padding: 16px 24px 68px;
+
+    @media (max-width: 767px) {
+      position: absolute;
+      top: 0;
+      padding: 0;
+      height: 48px;
+      width: 100%;
+      overflow: auto;
+      z-index: -1;
+    }
+
+    li {
+      @media (max-width: 767px) {
+        display: none;
+      }
+    }
+  }
   li {
     padding: 8px 0px;
+
+    .target {
+      position: relative;
+      i {
+        position: absolute;
+        right: 0;
+        display: none;
+
+        @media (max-width: 767px) {
+          display: inline-block;
+        }
+      }
+    }
+  }
+
+  .signMode,
+  .dateMode,
+  .textMode {
+    top: 100%;
+    height: calc(100vh - 240px);
+    z-index: 1;
+  }
+  .signMode .signModeTarget,
+  .dateMode .dateModeTarget,
+  .textMode .textModeTarget {
+    background: $white;
+    display: block;
+
+    > div {
+      margin: 4px 16px;
+    }
   }
 
   &__title {
@@ -198,10 +318,16 @@ function join(data) {
   }
 }
 .btnGroup {
-  position: sticky;
+  position: fixed;
   bottom: 0;
   padding: 6px 24px;
   background: #fff;
+  width: 244px;
+
+  @media (max-width: 767px) {
+    width: calc(100% - 56px);
+    padding-bottom: 16px;
+  }
 
   button {
     margin: 8px 0;

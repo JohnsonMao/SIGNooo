@@ -2,9 +2,11 @@
 import { nextTick, onMounted, ref, inject } from "vue";
 import Upload from "../Upload.vue";
 
-const width = window.innerWidth * 0.8 - 90;
-// const height = window.innerHeight * 0.8 - 40;
-const height = width / 3;
+const isDesktop = window.innerWidth > 767;
+const width = isDesktop
+  ? window.innerWidth * 0.8 - 90
+  : window.innerWidth * 0.77;
+const height = isDesktop ? width / 3 : window.innerHeight * 0.5;
 
 const canvas = ref(null);
 const ctx = ref(null);
@@ -22,6 +24,7 @@ let lastXY = { x: 0, y: 0 };
 let lastTime = 0;
 let lastLineWidth = -1;
 let strokeColor = "black";
+let lastName = "";
 
 onMounted(() => {
   const { name, img } = dialogStatus.value;
@@ -37,10 +40,12 @@ onMounted(() => {
       isStart.value = true;
       ctx.value.clearRect(0, 0, width, height);
       ctx.value.drawImage(image, 0, 0);
+      canvasHistroy.value.push(canvas.value.toDataURL());
     };
 
     image.src = img;
     signName.value = name;
+    lastName = name;
   }
 });
 
@@ -170,7 +175,7 @@ function submit() {
     return;
   }
   const index = signs.value.findIndex((sign) => sign.name === name);
-  if (~index) {
+  if (~index && !lastName) {
     required.value = true;
     tip.value = "名稱重複囉！";
     nextTick(() => {
@@ -181,7 +186,13 @@ function submit() {
   if (!isStart.value) return;
   const img = canvas.value.toDataURL();
 
-  signs.value.push({ name, img });
+  if (lastName !== name) localStorage.removeItem(`SIGN_${lastName}`);
+  if (lastName) {
+    const index = signs.value.findIndex((sign) => sign.name === lastName);
+    if (~index) signs.value.splice(index, 1, { name, img });
+  } else {
+    signs.value.push({ name, img });
+  }
   localStorage.setItem(`SIGN_${name}`, img);
   dialogStatus.value.show = false;
 }
@@ -193,19 +204,19 @@ function handle({ action, item }) {
         const image = new Image();
 
         image.onload = () => {
-          const isWidthLong = image.width > image.height;
-          const imageRatio = isWidthLong
-            ? image.height / image.width
-            : image.width / image.height;
+          const imageRatio = image.width / image.height;
+          const isWidthLong = imageRatio > 3;
 
+          // 根據圖片長寬比塞進 canvas
           ctx.value.clearRect(0, 0, width, height);
           ctx.value.drawImage(
             image,
             0,
             0,
-            width * imageRatio,
-            height * imageRatio
+            isWidthLong ? width : height * imageRatio,
+            isWidthLong ? width / imageRatio : height
           );
+          canvasHistroy.value.push(canvas.value.toDataURL());
         };
 
         image.src = URL.createObjectURL(item);
@@ -334,9 +345,16 @@ function handle({ action, item }) {
     }
 
     &__buttons {
-      @include position(absolute, initial, 24px, 24px, initial);
       @include flex(center, center, column);
+      position: absolute;
+      top: 24px;
+      right: 24px;
       gap: 12px;
+
+      @media (max-width: 767px) {
+        top: 12px;
+        right: 12px;
+      }
 
       button {
         margin: 0;

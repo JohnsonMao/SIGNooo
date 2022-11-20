@@ -24,4 +24,9 @@ const steps = [
   </el-steps>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.home__step {
+  --el-bg-color: #fff;
+  --el-text-color-placeholder: #fff;
+}
+</style>

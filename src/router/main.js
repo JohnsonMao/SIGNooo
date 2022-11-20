@@ -1,7 +1,12 @@
 const main = [
   {
     path: "/",
-    name: "main",
+    name: "Home",
+    component: () => import("@/views/Home.vue"),
+  },
+  {
+    path: "/Main",
+    name: "Main",
     component: () => import("@/views/Main.vue"),
   },
 ];

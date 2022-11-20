@@ -6,14 +6,14 @@ import {
   onUpdated,
   onBeforeUnmount,
   watch,
-onMounted,
+  onMounted,
 } from "vue";
 import { fabric } from "fabric";
+import { ElMessage } from "element-plus";
 import PdfHeader from "./PdfHeader.vue";
 import PdfAside from "./PdfAside.vue";
 import PdfSignBar from "./PdfSignBar.vue";
-import { usePrintPDF, usePdfToImage } from "@/composables";
-import { ElMessage } from "element-plus";
+import { usePrintPDF, usePdfToImage, useDownload } from "@/composables";
 
 const props = defineProps({
   pdfFile: {
@@ -25,14 +25,11 @@ const { proxy } = getCurrentInstance();
 
 const fileName = ref("");
 const imagePages = ref([]);
-const canvasRefs = ref([]);
+const canvasRefs = ref({});
 const pdfImages = ref([]);
 const mainRef = ref(null);
 const maxPage = ref(0);
 const curPage = ref(1);
-const canvasPages = computed(() =>
-  Array.from({ length: maxPage.value }, (_, i) => i + 1)
-);
 const isRender = ref(false);
 const observer = ref(null);
 const fabricCanvas = [];
@@ -57,11 +54,11 @@ async function uploadFile(file) {
   // 每上傳一個 PDF 重置狀態
   fileName.value = file.name;
   curPage.value = 1;
-  canvasRefs.value = [];
+  canvasRefs.value = {};
   imagePages.value = [];
-  isRender.value = false;
   fabricCanvas.length = 0;
   observer.value?.disconnect();
+  isRender.value = false;
 }
 
 function renderCanvas(canvas, index) {
@@ -90,15 +87,12 @@ function handlePage(page) {
 
 onUpdated(() => {
   const canvasArray = Object.values(canvasRefs.value);
-
+  console.log(canvasArray);
   if (!isRender.value && canvasArray.length !== 0) {
     isRender.value = true;
-    observer.value = new IntersectionObserver(
-      ([e]) => {
-        if (e.isIntersecting) curPage.value = +e.target.dataset.page;
-      },
-      { root: mainRef.value }
-    );
+    observer.value = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) curPage.value = +e.target.dataset.page;
+    });
 
     canvasArray.forEach((element) => {
       observer.value.observe(element);
@@ -134,7 +128,7 @@ function joinPdf({ action, item }) {
     ElMessage.error("請先上傳 PDF 文件");
     return;
   }
-  console.log(fabric);
+
   switch (action) {
     case "sign":
       fabric.Image.fromURL(item.img, (image) => {
@@ -148,6 +142,10 @@ function joinPdf({ action, item }) {
       fabricCanvas[curPage.value - 1].add(new fabric.IText(item));
       break;
   }
+}
+
+function download() {
+  useDownload(Object.values(canvasRefs.value));
 }
 </script>
 
@@ -167,22 +165,25 @@ function joinPdf({ action, item }) {
           @pageChange="handlePage"
         />
         <div ref="mainRef" class="pdf__main">
-          <canvas
-            v-for="page in canvasPages"
-            :key="page"
-            :data-page="page"
-            :id="`canvas_${page}`"
-            :ref="
-              (e) => {
-                canvasRefs.push(e);
-              }
-            "
-          ></canvas>
+          <template v-for="page in maxPage" :key="page">
+            <canvas
+              v-if="page < maxPage + 1"
+              :data-page="page"
+              :id="`canvas_${page}`"
+              :ref="
+                (e) => {
+                  if (page < maxPage + 1) {
+                    canvasRefs[page] = e;
+                  }
+                }
+              "
+            ></canvas>
+          </template>
         </div>
       </div>
     </div>
     <div class="pdf__signBar">
-      <PdfSignBar @joinPdf="joinPdf" />
+      <PdfSignBar @joinPdf="joinPdf" @download="download" />
     </div>
   </div>
 </template>
@@ -201,6 +202,12 @@ function joinPdf({ action, item }) {
 
   &__signBar {
     flex: 0 0 300px;
+
+    @media (max-width: 767px) {
+      position: absolute;
+      top: 114px;
+      width: 100%;
+    }
   }
 
   &__container {
@@ -216,6 +223,12 @@ function joinPdf({ action, item }) {
     height: calc(var(--height) - 48px);
     overflow: auto;
     flex: 1;
+
+    @media (max-width: 767px) {
+      margin-top: 48px;
+      margin-left: 0;
+      height: calc(var(--height) - 172px);
+    }
   }
 }
 </style>

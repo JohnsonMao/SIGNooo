@@ -1,7 +1,7 @@
 .fade-enter-active,
 .fade-leave-active,
-.component-enter-active,
-.component-leave-active {
+.slice-enter-active,
+.slice-leave-active {
     transition: all 0.3s linear;
 }
 .fade-enter-from,
@@ -14,14 +14,14 @@
     opacity: 1;
 }
 
-.component-enter-from,
-.component-leave-to {
+.slice-enter-from,
+.slice-leave-to {
     opacity: 0;
     transform: translateY(10px);
 }
 
-.component-enter-to,
-.component-leave-from {
+.slice-enter-to,
+.slice-leave-from {
     opacity: 1;
     transform: translateY(0px);
 }

@@ -1,26 +1,30 @@
 <script setup>
+import { useRoute, useRouter } from "vue-router";
 import logo from "@/assets/images/logo.png";
 import { inject } from "vue";
 
+const route = useRoute();
+const router = useRouter();
 const openDialog = inject("openDialog");
+
+function open() {
+  if (route.name === "Main") openDialog({ active: 0 });
+  else router.push({ name: "Main" });
+}
 
 const menus = [
   {
     logo: true,
     text: "SIGNooo",
-  },
-  {
-    text: "服務介紹",
+    click: () => router.push({ name: "Home" }),
   },
   {
     text: "簽署文件",
-    click: openDialog,
+    click: open,
   },
   {
-    text: "註冊",
-  },
-  {
-    text: "登入",
+    text: "清除紀錄",
+    click: () => localStorage.clear(),
   },
 ];
 </script>
@@ -35,7 +39,7 @@ const menus = [
     >
       <template v-if="menu.logo">
         <h1>{{ menu.text }}</h1>
-        <img :src="logo" alt="SIGNooo logo" />
+        <img :src="logo" alt="SIGNooo logo" @click="menu.click" />
       </template>
       <template v-else>
         <div @click="menu.click">
@@ -53,6 +57,7 @@ const menus = [
   padding: 8px 20px;
   align-items: center;
   gap: 20px;
+  z-index: 10;
 
   &__item {
     border-bottom: none;

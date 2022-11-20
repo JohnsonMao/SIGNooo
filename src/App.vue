@@ -32,7 +32,7 @@ export default defineComponent({
       <div :key="layout">
         <component :is="layout">
           <router-view #default="{ Component }">
-            <transition name="component" mode="out-in" appear>
+            <transition name="fade" mode="out-in" appear>
               <div class="layout" :key="routeName">
                 <component :is="Component" />
               </div>
