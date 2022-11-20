@@ -1,7 +1,17 @@
-# SIGNooo
+# SIGNooo [Demo](https://johnsonmao.github.io/SIGNooo/)
 
 隨時隨地都能簽， SIGNooo 幫你省下大筆時間！
 採用 [irena](https://2022.thef2e.com/users/12061549261454740005) 設計師的設計稿
+
+## 使用技術
+
+- fabric
+- jsPDF
+- PDF.js
+- canvas
+- svg 動畫
+- PWA 漸進式網站
+- RWD
 
 ## 系統說明
 

@@ -292,9 +292,9 @@ function handle({ action, item }) {
   </div>
 </template>
 
+<style src="@/assets/style/components/_tabs.scss"></style>
+<style src="@/assets/style/components/_button.scss"></style>
 <style scoped lang="scss">
-@import "@/assets/style/components/_tabs.scss";
-@import "@/assets/style/components/_button.scss";
 .sign {
   height: 100%;
 
