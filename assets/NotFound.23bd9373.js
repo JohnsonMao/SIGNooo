@@ -1,0 +1,1 @@
+import{_ as o}from"./index.5a8e41e5.js";import{o as e,d as r}from"./vue.ab3a18a5.js";const t={};function c(n,s){return e(),r("div",null,"\u4F60\u8FF7\u8DEF\u56C9")}const f=o(t,[["render",c]]);export{f as default};
