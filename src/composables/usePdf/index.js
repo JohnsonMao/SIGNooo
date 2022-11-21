@@ -19,12 +19,12 @@ async function renderPDF(pdfDoc, page) {
   const canvas = document.createElement("canvas");
   const canvasContext = canvas.getContext("2d");
 
-  const isMobile = Window.innerWidth < 768;
-  const ratio = viewport.height / viewport.width;
-
   // 設定 PDF 所要顯示的寬高及渲染
-  canvas.height = isMobile ? Window.innerWidth * ratio : viewport.height;
-  canvas.width = isMobile ? Window.innerWidth : viewport.width;
+  const isMobile = window.innerWidth < 768;
+  console.log(window.innerWidth)
+  const ratio = viewport.height / viewport.width;
+  canvas.height = isMobile ? window.innerWidth * ratio : viewport.height;
+  canvas.width = isMobile ? window.innerWidth : viewport.width;
   const renderTask = pdfPage.render({ canvasContext, viewport });
 
   // 回傳做好的 PDF canvas 與 高度
