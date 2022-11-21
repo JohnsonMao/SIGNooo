@@ -5,8 +5,8 @@ import Upload from "../Upload.vue";
 const isDesktop = window.innerWidth > 767;
 const width = isDesktop
   ? window.innerWidth * 0.8 - 90
-  : window.innerWidth * 0.77;
-const height = isDesktop ? width / 3 : window.innerHeight * 0.5;
+  : window.innerWidth * 0.7;
+const height = isDesktop ? window.innerHeight * 0.4 : window.innerHeight * 0.5;
 
 const canvas = ref(null);
 const ctx = ref(null);
