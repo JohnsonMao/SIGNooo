@@ -1,6 +1,5 @@
 <script setup>
 import {
-  computed,
   getCurrentInstance,
   ref,
   onUpdated,
@@ -10,6 +9,7 @@ import {
 } from "vue";
 import { fabric } from "fabric";
 import { ElMessage } from "element-plus";
+import { CaretTop, CaretBottom } from "@element-plus/icons-vue";
 import PdfHeader from "./PdfHeader.vue";
 import PdfAside from "./PdfAside.vue";
 import PdfSignBar from "./PdfSignBar.vue";
@@ -87,7 +87,7 @@ function handlePage(page) {
 
 onUpdated(() => {
   const canvasArray = Object.values(canvasRefs.value);
-  console.log(canvasArray);
+
   if (!isRender.value && canvasArray.length !== 0) {
     isRender.value = true;
     observer.value = new IntersectionObserver(([e]) => {
@@ -145,7 +145,19 @@ function joinPdf({ action, item }) {
 }
 
 function download() {
-  useDownload(Object.values(canvasRefs.value));
+  useDownload(Object.values(canvasRefs.value), fileName.value);
+}
+
+let top = 0;
+
+function mobileHandleScroll(px) {
+  top += px;
+  top = Math.max(top, 0);
+  top = Math.min(top, mainRef.value.scrollHeight);
+  mainRef.value.scrollTo({
+    top,
+    behavior: "smooth",
+  });
 }
 </script>
 
@@ -164,7 +176,8 @@ function download() {
           :imagePages="imagePages"
           @pageChange="handlePage"
         />
-        <div ref="mainRef" class="pdf__main">
+        <div ref="mainRef" class="pdf__main" @touchmove="handleTouchmove">
+          <!-- TODO: 待優化成一個 Canvas 渲覽控制全部 PDF -->
           <template v-for="page in maxPage" :key="page">
             <canvas
               v-if="page < maxPage + 1"
@@ -179,6 +192,14 @@ function download() {
               "
             ></canvas>
           </template>
+          <div class="mobileControlScroll">
+            <el-button @click="mobileHandleScroll(-100)"
+              ><el-icon><CaretTop /></el-icon
+            ></el-button>
+            <el-button @click="mobileHandleScroll(100)"
+              ><el-icon><CaretBottom /></el-icon
+            ></el-button>
+          </div>
         </div>
       </div>
     </div>
@@ -228,6 +249,22 @@ function download() {
       margin-top: 48px;
       margin-left: 0;
       height: calc(var(--height) - 172px);
+    }
+
+    .mobileControlScroll {
+      display: none;
+
+      @media (max-width: 767px) {
+        @include flex(center, center, column);
+        position: fixed;
+        right: 16px;
+        bottom: 112px;
+        gap: 8px;
+
+        button {
+          margin: 0;
+        }
+      }
     }
   }
 }

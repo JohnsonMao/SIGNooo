@@ -2,7 +2,7 @@ import { jsPDF } from "jspdf";
 
 const pdf = new jsPDF();
 
-export default function useDownload(canvasPages) {
+export default function useDownload(canvasPages, fileName) {
   return new Promise((res) => {
     // TODO: 待優化，PDF 全部轉存圖片檔案體積變很大
     canvasPages.forEach((canvas, index) => {
@@ -18,7 +18,7 @@ export default function useDownload(canvasPages) {
     });
 
     // 將檔案取名並下載
-    pdf.save("download.pdf");
+    pdf.save(`${fileName}(簽署完成).pdf`);
     res();
   });
 }

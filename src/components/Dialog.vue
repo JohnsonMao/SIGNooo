@@ -54,6 +54,7 @@ function handClose() {
 
   @media (max-width: 767px) {
     width: 90%;
+    margin: 0;
   }
 
   &.mode {

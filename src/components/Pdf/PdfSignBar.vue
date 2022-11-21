@@ -29,14 +29,16 @@ function del({ name }, index) {
     confirmButtonText: "確定",
     cancelButtonText: "取消",
     type: "warning",
-  }).then(() => {
-    signs.value.splice(index, 1);
-    localStorage.removeItem(`SIGN_${name}`);
-    ElMessage({
-      type: "success",
-      message: "刪除完成",
-    });
-  });
+  })
+    .then(() => {
+      signs.value.splice(index, 1);
+      localStorage.removeItem(`SIGN_${name}`);
+      ElMessage({
+        type: "success",
+        message: "刪除完成",
+      });
+    })
+    .catch(() => {});
 }
 
 function join(data) {
@@ -147,6 +149,16 @@ function submit() {
       <el-button class="primary-btn" size="large" @click="submit">
         簽署文件並下載
       </el-button>
+      <footer>
+        Copyright © 2022
+        <a
+          href="https://2022.thef2e.com/users/12061549261454740005"
+          target="_blank"
+          >irena</a
+        >
+        Design. &
+        <a href="https://github.com/JohnsonMao" target="_blank">Mao</a> F2E.
+      </footer>
     </div>
   </aside>
 </template>
@@ -334,6 +346,15 @@ function submit() {
     margin: 8px 0;
     width: 100%;
     border-radius: 10px;
+  }
+
+  footer {
+    font-size: 12px;
+    text-align: center;
+
+    a {
+      color: $primary-dark;
+    }
   }
 }
 </style>

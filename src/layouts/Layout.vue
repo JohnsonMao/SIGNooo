@@ -8,6 +8,14 @@ const dialogStatus = ref({
   img: null,
   name: "",
 });
+const signs = ref(
+  Object.keys(localStorage).map((key) => ({
+    name: /^SIGN_(.+)$/.exec(key)?.[1] || "",
+    img: localStorage.getItem(key),
+  }))
+);
+
+provide("signs", signs);
 
 function openDialog({ active, img, name }) {
   dialogStatus.value.show = true;

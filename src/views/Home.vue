@@ -1,4 +1,5 @@
 <script setup>
+import { onMounted } from "vue";
 import { useRouter } from "vue-router";
 import DrawSvg from "@/assets/images/draw.vue";
 import StepVue from "@/components/Step.vue";
@@ -60,16 +61,27 @@ const letters = [s, i, g, n, dot, logo];
       </transition>
     </div>
   </div>
+  <footer>
+    Copyright © 2022
+    <a href="https://2022.thef2e.com/users/12061549261454740005" target="_blank"
+      >irena</a
+    >
+    Design. &
+    <a href="https://github.com/JohnsonMao" target="_blank">Mao</a> F2E.
+  </footer>
 </template>
 
 <style scoped lang="scss">
 @import "@/assets/style/components/_button.scss";
 .container {
   position: relative;
+  height: calc(100vh - 57px);
+  overflow: hidden;
 
   .letter {
     position: absolute;
-    opacity: 0.7;
+    pointer-events: none;
+    user-select: none;
 
     animation: round var(--time) var(--delay) infinite linear;
   }
@@ -99,7 +111,7 @@ const letters = [s, i, g, n, dot, logo];
     right: 20%;
     width: 30%;
     z-index: 1;
-		transform: translateY(-50%);
+    transform: translateY(-50%);
   }
 
   &__step {
@@ -132,6 +144,19 @@ const letters = [s, i, g, n, dot, logo];
   }
 }
 
+footer {
+  position: fixed;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: $white;
+  white-space: nowrap;
+
+  a {
+    color: $primary-normal;
+  }
+}
+
 @keyframes round {
   0% {
     transform: rotate(0deg) scale(0.8) translate(-200px, 200px);
@@ -139,7 +164,7 @@ const letters = [s, i, g, n, dot, logo];
   }
   50% {
     transform: rotate(180deg) scale(1.2) translate(0, 0);
-    opacity: 1;
+    opacity: 0.7;
   }
   100% {
     transform: rotate(360deg) scale(0.8) translate(200px, -200px);

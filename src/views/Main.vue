@@ -1,6 +1,6 @@
 <script setup>
 import PdfVue from "@/components/Pdf/Pdf.vue";
-import { ref, inject, computed, provide } from "vue";
+import { ref, inject, computed } from "vue";
 import DialogVue from "@/components/Dialog.vue";
 import StepVue from "@/components/Step.vue";
 import UploadVue from "@/components/Upload.vue";
@@ -10,14 +10,6 @@ const dialogStatus = inject("dialogStatus");
 const pdfFile = ref(null);
 const active = computed(() => dialogStatus.value.active);
 const isSignMode = computed(() => active.value % 1 !== 0);
-const signs = ref(
-  Object.keys(localStorage).map((key) => ({
-    name: /^SIGN_(.+)$/.exec(key)?.[1] || "",
-    img: localStorage.getItem(key),
-  }))
-);
-
-provide("signs", signs);
 
 function handle({ action, item }) {
   switch (action) {
